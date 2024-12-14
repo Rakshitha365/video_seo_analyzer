@@ -1,0 +1,6 @@
+transformers
+SpeechRecognition
+google-api-python-client
+nltk
+keybert
+moviepy
