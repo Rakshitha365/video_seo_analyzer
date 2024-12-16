@@ -1,126 +1,286 @@
-import React from "react";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
+
+/* Main Landing Page Component */
 const LandingPage = () => {
   return (
-    <div className="bg-white">
-      {/* Hero Section */}
-      <section className="bg-blue-50 py-16 px-8">
-        <div className="container mx-auto flex flex-col lg:flex-row items-center">
-          <div className="text-center lg:text-left lg:w-1/2">
-            <h1 className="text-4xl lg:text-5xl font-bold text-gray-800 mb-4">
-              Increase your website traffic with us!
-            </h1>
-            <p className="text-gray-600 mb-6">
-              Maximize your website traffic with our modern SEO strategies and
-              innovative solutions to take your business to the next level.
-            </p>
-            <button className="bg-red-500 hover:bg-red-600 text-white py-2 px-6 rounded-lg">
-              Learn More
-            </button>
-          </div>
-          <div className="lg:w-1/2 mt-8 lg:mt-0">
-            <img
-              src="https://via.placeholder.com/500x350"
-              alt="Website Traffic"
-              className="mx-auto"
-            />
-          </div>
-        </div>
-      </section>
+    <div className="bg-gray-100">
+      {/* Header */}
+      <Header />
 
-      {/* Services Section */}
-      <section className="py-16 bg-white">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-gray-800">
-            We provide the best services
-          </h2>
-        </div>
-        <div className="container mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 px-8">
-          {/* SEO Management */}
-          <div className="p-6 bg-gray-50 shadow-lg rounded-lg text-center">
-            <div className="bg-blue-500 text-white rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-              <i className="fas fa-chart-line text-2xl"></i>
-            </div>
-            <h3 className="text-xl font-bold text-gray-800 mb-2">
-              SEO Management
-            </h3>
-            <p className="text-gray-600">
-              Maximize your website traffic with our top-notch SEO strategies.
-            </p>
-          </div>
+      {/* Top Section */}
+      <TopSection />
 
-          {/* Email Marketing */}
-          <div className="p-6 bg-gray-50 shadow-lg rounded-lg text-center">
-            <div className="bg-blue-500 text-white rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-              <i className="fas fa-envelope text-2xl"></i>
-            </div>
-            <h3 className="text-xl font-bold text-gray-800 mb-2">
-              Email Marketing
-            </h3>
-            <p className="text-gray-600">
-              Connect with your audience through effective email campaigns.
-            </p>
-          </div>
+      {/* Features Section */}
+      <FeaturesSection />
 
-          {/* Social Media Promotion */}
-          <div className="p-6 bg-gray-50 shadow-lg rounded-lg text-center">
-            <div className="bg-blue-500 text-white rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-              <i className="fas fa-share-alt text-2xl"></i>
-            </div>
-            <h3 className="text-xl font-bold text-gray-800 mb-2">
-              Social Media Promotion
-            </h3>
-            <p className="text-gray-600">
-              Boost your brand visibility on social platforms effectively.
-            </p>
-          </div>
-        </div>
-      </section>
+      {/* How It Works Section */}
+      <HowItWorksSection />
 
-      {/* About Section */}
-      <section className="py-16 bg-gray-50 px-8">
-        <div className="container mx-auto flex flex-col lg:flex-row items-center">
-          <div className="lg:w-1/2 mb-8 lg:mb-0">
-            <img
-              src="https://via.placeholder.com/500x350"
-              alt="About Us"
-              className="mx-auto"
-            />
-          </div>
-          <div className="lg:w-1/2 text-center lg:text-left">
-            <h2 className="text-3xl font-bold text-gray-800 mb-4">
-              We create success for your future
-            </h2>
-            <p className="text-gray-600 mb-6">
-              Our team delivers innovative solutions to grow your online
-              presence and help you achieve measurable results.
-            </p>
-            <button className="bg-red-500 hover:bg-red-600 text-white py-2 px-6 rounded-lg">
-              Learn More
-            </button>
-          </div>
-        </div>
-      </section>
+      {/* Pricing Section */}
+      <PricingSection />
 
-      {/* Stats Section */}
-      <section className="py-12 bg-blue-500 text-white text-center">
-        <div className="container mx-auto grid grid-cols-3 gap-8 px-8">
-          <div>
-            <h3 className="text-4xl font-bold">11k</h3>
-            <p className="text-lg">Happy Clients</p>
-          </div>
-          <div>
-            <h3 className="text-4xl font-bold">300+</h3>
-            <p className="text-lg">Team Members</p>
-          </div>
-          <div>
-            <h3 className="text-4xl font-bold">60+</h3>
-            <p className="text-lg">Countries</p>
-          </div>
-        </div>
-      </section>
+      {/* Footer */}
+      <Footer />
     </div>
   );
 };
+
+const Header = () => (
+  <header className="bg-white shadow-md fixed w-full z-10 top-0">
+    <div className="max-w-7xl mx-auto flex items-center justify-between py-4 px-6">
+      <div className="text-2xl font-bold text-blue-600">SEOgenie</div>
+      <nav className="flex space-x-4">
+        <a href="#features" className="text-gray-600 hover:text-blue-600">
+          Key Features
+        </a>
+        <a href="#how-it-works" className="text-gray-600 hover:text-blue-600">
+          How It Works
+        </a>
+        <a href="#pricing" className="text-gray-600 hover:text-blue-600">
+          Choose Your Plan
+        </a>
+      </nav>
+    </div>
+  </header>
+);
+
+/* Top Section */
+const TopSection = () => {
+  const navigate = useNavigate();
+  const handleGetStarted = () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login");
+    } else {
+      navigate("/keyword-strategy-builder");
+    }
+  };
+  return (
+  <section className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-20 px-6 mt-16">
+    <div className="max-w-7xl mx-auto text-center">
+      <h1 className="text-4xl md:text-6xl font-extrabold mb-6">
+        Optimize Your Video SEO with AI-Powered Insights
+      </h1>
+      <p className="text-lg md:text-xl mb-8">
+        Generate AI-driven SEO keywords, hashtags, and performance analytics for
+        better video rankings.
+      </p>
+      <div>
+        <button className="bg-white text-blue-600 font-semibold py-3 px-6 rounded-full shadow-md transition-all duration-300 transform hover:bg-gray-200 hover:shadow-lg hover:scale-110 mr-4"
+        onClick={handleGetStarted}>
+          Get Started for Free
+        </button>
+        <button className="bg-indigo-700 text-white font-semibold py-3 px-6 rounded-full shadow-md transition-all duration-300 transform hover:bg-indigo-800 hover:shadow-lg hover:scale-110">
+          Explore Premium Plans
+        </button>
+      </div>
+    </div>
+  </section>
+  )
+};
+
+/* Features Section */
+const FeaturesSection = () => (
+  <section id="features" className="py-20 px-6">
+    <div className="max-w-7xl mx-auto">
+      <h2 className="text-3xl font-bold text-center mb-12">Key Features</h2>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {features.map((feature, index) => (
+          <FeatureCard
+            key={index}
+            icon={feature.icon}
+            title={feature.title}
+            description={feature.description}
+          />
+        ))}
+      </div>
+    </div>
+  </section>
+);
+
+/* Dynamic How It Works Section */
+const HowItWorksSection = () => {
+  const [activeStep, setActiveStep] = useState(null);
+
+  return (
+    <section id="how-it-works" className="bg-gray-200 py-20 px-6">
+      <div className="max-w-7xl mx-auto text-center">
+        <h2 className="text-3xl font-bold mb-12">How It Works</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {howItWorksSteps.map((step, index) => (
+            <div
+              key={index}
+              onMouseEnter={() => setActiveStep(index)}
+              onMouseLeave={() => setActiveStep(null)}
+              className="relative bg-white shadow-lg rounded-lg p-6 text-center overflow-hidden transition-transform duration-300 hover:scale-105"
+            >
+              {/* Default Content */}
+              <div className="flex flex-col items-center">
+                <div className="text-5xl mb-4">🚀</div>
+                <h3 className="text-xl font-semibold mb-2">
+                  {index + 1}. {step.title}
+                </h3>
+                <p className="text-gray-600">{step.description}</p>
+              </div>
+
+              {/* Hover Content */}
+              {activeStep === index && (
+                <div className="absolute inset-0 bg-white flex flex-col items-center justify-center rounded-lg transition-all duration-300">
+                  <p className="text-gray-700 text-sm mb-4">
+                    {step.hoverDetails}
+                  </p>
+                  <img
+                    src={step.image}
+                    alt={step.title}
+                    className="w-32 h-32 object-cover rounded-md"
+                  />
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+/* Pricing Section */
+const PricingSection = () => (
+  <section id="pricing" className="py-20 px-6">
+    <div className="max-w-7xl mx-auto text-center">
+      <h2 className="text-3xl font-bold mb-12">Choose Your Plan</h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {pricingPlans.map((plan, index) => (
+          <PlanCard key={index} plan={plan} />
+        ))}
+      </div>
+    </div>
+  </section>
+);
+
+/* Footer */
+const Footer = () => (
+  <footer className="bg-gray-800 text-white py-6">
+    <div className="max-w-7xl mx-auto text-center">
+      <p>&copy; {new Date().getFullYear()} SEOgenie. All rights reserved.</p>
+    </div>
+  </footer>
+);
+
+/* Reusable Components */
+const FeatureCard = ({ icon, title, description }) => (
+  <div className="bg-white shadow-lg rounded-lg p-6 text-center">
+    <div className="text-5xl mb-4">{icon}</div>
+    <h3 className="text-xl font-semibold mb-2">{title}</h3>
+    <p className="text-gray-600">{description}</p>
+  </div>
+);
+
+const PlanCard = ({ plan }) => (
+  <div className="relative bg-white shadow-lg rounded-lg p-6 text-center border-2 border-transparent hover:border-indigo-500 transform transition-transform duration-300 hover:scale-105">
+    <h3 className="text-2xl font-bold mb-4">{plan.name}</h3>
+    <p className="text-gray-600 mb-6">{plan.description}</p>
+    <ul className="text-left pl-10 mb-6">
+      {plan.features.map((feature, idx) => (
+        <li key={idx} className="flex items-start mb-2">
+          <span className="text-blue-600 mr-4">✔</span>
+          <p>{feature}</p>
+        </li>
+      ))}
+    </ul>
+    <div className="text-4xl font-extrabold mb-6">
+      {plan.price === 0 ? "Free" : `$${plan.price}/mo`}
+    </div>
+    <button className="bg-blue-600 text-white font-semibold py-3 px-6 rounded-full transition-transform duration-300 hover:bg-blue-700 hover:shadow-lg transform hover:scale-110">
+      {plan.buttonText}
+    </button>
+  </div>
+);
+
+
+/* Data */
+const features = [
+  {
+    icon: "🔍",
+    title: "AI-Driven Keywords",
+    description: "Optimized suggestions.",
+  },
+  {
+    icon: "📊",
+    title: "Real-Time Insights",
+    description: "Track performance.",
+  },
+  {
+    icon: "⚙️",
+    title: "Competitor Analysis",
+    description: "Compare and grow.",
+  },
+];
+
+const howItWorksSteps = [
+  {
+    title: "Video Upload",
+    description: "Upload videos and start the SEO workflow.",
+    hoverDetails: "Drag and drop videos or upload directly from your device.",
+    image: "https://via.placeholder.com/150", // Replace with actual images
+  },
+  {
+    title: "Audio Extraction",
+    description: "Extract audio using MoviePy.",
+    hoverDetails: "MoviePy seamlessly extracts audio for analysis.",
+    image: "https://via.placeholder.com/150",
+  },
+  {
+    title: "Speech to Text",
+    description: "Convert audio to text with speech recognition.",
+    hoverDetails: "Advanced recognition models convert speech into text.",
+    image: "https://via.placeholder.com/150",
+  },
+  {
+    title: "Keyword Generation",
+    description: "Generate keywords using KeyBERT.",
+    hoverDetails: "KeyBERT generates optimized keywords tailored to content.",
+    image: "https://via.placeholder.com/150",
+  },
+  {
+    title: "Text Summarization",
+    description: "Summarize content using LLaMA or BART.",
+    hoverDetails: "AI models provide concise and accurate summaries.",
+    image: "https://via.placeholder.com/150",
+  },
+  {
+    title: "SEO Ranking",
+    description: "Rank keywords with YouTube API insights.",
+    hoverDetails: "Track and rank keywords for SEO performance.",
+    image: "https://via.placeholder.com/150",
+  },
+];
+
+const pricingPlans = [
+  {
+    name: "Free",
+    description: "Basic tools.",
+    price: 0,
+    buttonText: "Get Started",
+    features: [
+      "Limited features (e.g., limited uploads per day).",
+      "Basic keyword suggestions tailored to general SEO needs.",
+      "Ad-supported experience.",
+    ],
+  },
+  {
+    name: "Premium",
+    description: "Advanced tools.",
+    price: 30,
+    buttonText: "Upgrade Now",
+    features: [
+      "Unlimited uploads with faster keyword generation.",
+      "Advanced keyword suggestions, including long-tail keywords.",
+      "Priority support and an ad-free experience.",
+    ],
+  },
+];
 
 export default LandingPage;

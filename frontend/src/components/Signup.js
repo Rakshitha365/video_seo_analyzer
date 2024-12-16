@@ -52,7 +52,7 @@ const Signup = () => {
       }
     } catch (error) {
       const errorMsg =
-        error.response?.data?.message || "Signup failed. Please try again.";
+        error.response?.data?.message ||  "Please try again.";
 
       window.alert(`Signup Failed: ${errorMsg}`);
     }
@@ -61,7 +61,7 @@ const Signup = () => {
   return (
     <div className="flex h-screen">
       {/* Left Section - Welcome Text and Illustration */}
-      <div className="hidden lg:flex items-center justify-center w-1/2 bg-gradient-to-b from-purple-500 to-indigo-600 text-white">
+      <div className="hidden lg:flex items-center justify-center w-1/2 bg-gradient-to-b from-blue-500 to-indigo-600 text-white">
         <div className="text-center px-8">
           <h2 className="text-lg font-medium mb-2">Help Us 24/7</h2>
           <h1 className="text-5xl font-bold mb-4">Join Us Today</h1>
@@ -133,7 +133,7 @@ const Signup = () => {
             </div>
 
             {/* Confirm Password Field */}
-            <div className="mb-8">
+            <div className="mb-10">
               <label
                 htmlFor="confirmPassword"
                 className="block text-gray-700 font-medium mb-2"

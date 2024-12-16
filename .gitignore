@@ -4,10 +4,13 @@
 /node_modules
 /.pnp
 .pnp.js
+uploaded_videos/
+
 
 # Ignore virtual environment directories
 /FastAPI/env
 /backend/node_module
+/frontend/node_module
 /FastApi/__pycache__
 /FastApi/uploaded_videos
 

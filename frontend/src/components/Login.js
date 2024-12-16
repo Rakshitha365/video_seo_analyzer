@@ -41,7 +41,7 @@ const Login = () => {
 
       if (response.data.token) {
         localStorage.setItem("token", response.data.token);
-        navigate("/home");
+        navigate("/keyword-strategy-builder");
       }
     } catch (error) {
       const errorMsg =
@@ -53,7 +53,7 @@ const Login = () => {
   return (
     <div className="flex h-screen">
       {/* Left Section - Welcome Text and Illustration */}
-      <div className="hidden lg:flex items-center justify-center w-1/2 bg-gradient-to-b from-purple-500 to-indigo-600 text-white">
+      <div className="hidden lg:flex items-center justify-center w-1/2 bg-gradient-to-b from-blue-500 to-indigo-600 text-white">
         <div className="text-center px-8">
           <h2 className="text-lg font-medium mb-2">Help Us 24/7</h2>
           <h1 className="text-5xl font-bold mb-4">Welcome Back</h1>
