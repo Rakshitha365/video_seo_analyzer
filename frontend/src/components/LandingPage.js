@@ -27,24 +27,65 @@ const LandingPage = () => {
   );
 };
 
-const Header = () => (
-  <header className="bg-white shadow-md fixed w-full z-10 top-0">
-    <div className="max-w-7xl mx-auto flex items-center justify-between py-4 px-6">
-      <div className="text-2xl font-bold text-blue-600">SEOgenie</div>
-      <nav className="flex space-x-4">
-        <a href="#features" className="text-gray-600 hover:text-blue-600">
-          Key Features
-        </a>
-        <a href="#how-it-works" className="text-gray-600 hover:text-blue-600">
-          How It Works
-        </a>
-        <a href="#pricing" className="text-gray-600 hover:text-blue-600">
-          Choose Your Plan
-        </a>
-      </nav>
-    </div>
-  </header>
-);
+const Header = () => {
+  const scrollToSection = (id, duration = 1000) => {
+    const target = document.getElementById(id);
+    if (!target) return;
+
+    const start = window.scrollY;
+    const end = target.getBoundingClientRect().top + window.scrollY;
+    const startTime = performance.now();
+
+    const easeInOutQuad = (t) =>
+      t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+
+    const scroll = (currentTime) => {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const ease = easeInOutQuad(progress);
+      const scrollPos = start + (end - start) * ease;
+
+      window.scrollTo(0, scrollPos);
+
+      if (progress < 1) {
+        requestAnimationFrame(scroll);
+      }
+    };
+
+    requestAnimationFrame(scroll);
+  };
+
+  return (
+    <header className="bg-white shadow-md fixed w-full z-10 top-0">
+      <div className="max-w-7xl mx-auto flex items-center justify-between py-4 px-6">
+        <div className="text-2xl font-bold text-blue-600">SEOgenie</div>
+        <nav className="flex space-x-4">
+          <button
+            onClick={() => scrollToSection("features")}
+            className="text-gray-600 hover:text-blue-600"
+          >
+            Key Features
+          </button>
+          <button
+            onClick={() => scrollToSection("how-it-works")}
+            className="text-gray-600 hover:text-blue-600"
+          >
+            How It Works
+          </button>
+          <button
+            onClick={() => scrollToSection("pricing")}
+            className="text-gray-600 hover:text-blue-600"
+          >
+            Choose Your Plan
+          </button>
+        </nav>
+      </div>
+    </header>
+  );
+};
+
+
+
 
 /* Top Section */
 const TopSection = () => {
@@ -273,7 +314,7 @@ const pricingPlans = [
   {
     name: "Premium",
     description: "Advanced tools.",
-    price: 30,
+    price: 3,
     buttonText: "Upgrade Now",
     features: [
       "Unlimited uploads with faster keyword generation.",

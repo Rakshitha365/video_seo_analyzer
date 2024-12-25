@@ -149,7 +149,7 @@ const Login = () => {
             </button>
 
             {/* Additional Links */}
-            <div className="mt-6 text-center">
+             <div className="mt-6 text-center">
               <a
                 href="#"
                 className="text-gray-400 hover:underline text-sm block mb-2"

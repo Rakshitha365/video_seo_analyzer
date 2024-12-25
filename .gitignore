@@ -9,8 +9,8 @@ uploaded_videos/
 
 # Ignore virtual environment directories
 /FastAPI/env
-/backend/node_module
-/frontend/node_module
+/backend/node_modules
+/frontend/node_modules
 /FastApi/__pycache__
 /FastApi/uploaded_videos
 
