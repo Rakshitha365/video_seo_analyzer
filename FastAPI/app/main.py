@@ -91,12 +91,11 @@ async def keywords_bart_with_seed(file: UploadFile = File(...), seed_keywords: s
         "message": "Keywords and SEO rank generated successfully."
     }
 
-
 @app.post("/keywords-bart-seed-seo/")
 async def keywords_bart_with_seed_and_seo(file: UploadFile = File(...), seed_keywords: str = Form(...)):
     """
-    Endpoint to generate keywords from the uploaded video using BART and include user-provided seed keywords,
-    and ranks the keywords based on YouTube SEO.
+    Endpoint to generate keywords from the uploaded video using BART, include user-provided seed keywords,
+    rank the keywords based on YouTube SEO, and fetch Wikidata-related keywords.
     """
     # Validate the file type
     if not file.filename.endswith(('.mp4', '.avi', '.mov', '.mkv')):
@@ -119,12 +118,20 @@ async def keywords_bart_with_seed_and_seo(file: UploadFile = File(...), seed_key
 
     # Generate keywords using BART and seed keywords
     combined_keywords, keyword_ranking = generate_keywords_with_bart_and_seeds_using_youtube(text, seed_keywords_list)
+    print() 
+    # Extract keywords from ranking
+    ranked_keywords = [item['keyword'] for item in keyword_ranking]
+
+    # Fetch Wikidata keywords for ranked keywords
+    wikidata_keywords = fetch_wikidata_details_for_keywords(ranked_keywords)
 
     return {
         "keywords": combined_keywords,
         "seed_keywords": seed_keywords_list,
         "keyword_ranking": keyword_ranking,
-        "message": "Keywords generated using BART, seed keywords, and SEO ranking from YouTube."
+        "wikidata_keywords": wikidata_keywords,
+        "message": "Keywords generated using BART, seed keywords, YouTube SEO ranking, and Wikidata.",
+        "extra " :ranked_keywords
     }
 if __name__ == "__main__":
     import uvicorn
