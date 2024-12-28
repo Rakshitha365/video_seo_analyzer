@@ -25,7 +25,7 @@ bart_model = BartForConditionalGeneration.from_pretrained("facebook/bart-large-c
 bart_tokenizer = BartTokenizer.from_pretrained("facebook/bart-large-cnn")
 
 # YouTube API Key
-API_KEY = 'AIzaSyCcUYpS5suIUK2RBnMMV54DR-NHhOKUxvM'
+API_KEY = 'AIzaSyDFRwlp2U093yZxNPTecj9iQxKgCczvX8M'
 
 # Initialize YouTube API client
 youtube = build('youtube', 'v3', developerKey=API_KEY)

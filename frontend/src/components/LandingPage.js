@@ -28,33 +28,7 @@ const LandingPage = () => {
 };
 
 const Header = () => {
-  const scrollToSection = (id, duration = 1000) => {
-    const target = document.getElementById(id);
-    if (!target) return;
-
-    const start = window.scrollY;
-    const end = target.getBoundingClientRect().top + window.scrollY;
-    const startTime = performance.now();
-
-    const easeInOutQuad = (t) =>
-      t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
-
-    const scroll = (currentTime) => {
-      const elapsed = currentTime - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-      const ease = easeInOutQuad(progress);
-      const scrollPos = start + (end - start) * ease;
-
-      window.scrollTo(0, scrollPos);
-
-      if (progress < 1) {
-        requestAnimationFrame(scroll);
-      }
-    };
-
-    requestAnimationFrame(scroll);
-  };
-
+  const scrollToSection = useScrollToSection();
   return (
     <header className="bg-white shadow-md fixed w-full z-10 top-0">
       <div className="max-w-7xl mx-auto flex items-center justify-between py-4 px-6">
@@ -89,15 +63,8 @@ const Header = () => {
 
 /* Top Section */
 const TopSection = () => {
-  const navigate = useNavigate();
-  const handleGetStarted = () => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      navigate("/login");
-    } else {
-      navigate("/keyword-strategy-builder");
-    }
-  };
+  const handleGetStarted = useHandleGetStarted();
+  const scrollToSection = useScrollToSection();
   return (
   <section className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-20 px-6 mt-16">
     <div className="max-w-7xl mx-auto text-center">
@@ -113,7 +80,8 @@ const TopSection = () => {
         onClick={handleGetStarted}>
           Get Started for Free
         </button>
-        <button className="bg-indigo-700 text-white font-semibold py-3 px-6 rounded-full shadow-md transition-all duration-300 transform hover:bg-indigo-800 hover:shadow-lg hover:scale-110">
+        <button className="bg-indigo-700 text-white font-semibold py-3 px-6 rounded-full shadow-md transition-all duration-300 transform hover:bg-indigo-800 hover:shadow-lg hover:scale-110"
+        onClick={() => scrollToSection("pricing")}>
           Explore Premium Plans
         </button>
       </div>
@@ -124,7 +92,7 @@ const TopSection = () => {
 
 /* Features Section */
 const FeaturesSection = () => (
-  <section id="features" className="py-20 px-6">
+  <section id="features" className="w-full min-h-screen py-20 px-6">
     <div className="max-w-7xl mx-auto">
       <h2 className="text-3xl font-bold text-center mb-12">Key Features</h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -146,10 +114,13 @@ const HowItWorksSection = () => {
   const [activeStep, setActiveStep] = useState(null);
 
   return (
-    <section id="how-it-works" className="bg-gray-200 py-20 px-6">
+    <section
+      id="how-it-works"
+      className="w-full min-h-screen bg-gray-200 py-24 px-6"
+    >
       <div className="max-w-7xl mx-auto text-center">
         <h2 className="text-3xl font-bold mb-12">How It Works</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
           {howItWorksSteps.map((step, index) => (
             <div
               key={index}
@@ -188,18 +159,27 @@ const HowItWorksSection = () => {
 };
 
 /* Pricing Section */
-const PricingSection = () => (
-  <section id="pricing" className="py-20 px-6">
-    <div className="max-w-7xl mx-auto text-center">
-      <h2 className="text-3xl font-bold mb-12">Choose Your Plan</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {pricingPlans.map((plan, index) => (
-          <PlanCard key={index} plan={plan} />
-        ))}
+const PricingSection = () => { 
+  const handleGetStarted = useHandleGetStarted();
+  return (
+    <section
+      id="pricing"
+      className="w-full min-h-screen py-24 px-6"
+    >
+      <div className="max-w-7xl mx-auto text-center">
+        <h2 className="text-3xl font-bold mb-12">Choose Your Plan</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {pricingPlans.map((plan, index) => (
+            <PlanCard
+              key={index}
+              plan={plan}
+              handleGetStarted={plan.price === 0 ? handleGetStarted : null}
+            />
+          ))}
+        </div>
       </div>
-    </div>
-  </section>
-);
+    </section>
+  );};
 
 /* Footer */
 const Footer = () => (
@@ -219,7 +199,7 @@ const FeatureCard = ({ icon, title, description }) => (
   </div>
 );
 
-const PlanCard = ({ plan }) => (
+const PlanCard = ({ plan, handleGetStarted }) => (
   <div className="relative bg-white shadow-lg rounded-lg p-6 text-center border-2 border-transparent hover:border-indigo-500 transform transition-transform duration-300 hover:scale-105">
     <h3 className="text-2xl font-bold mb-4">{plan.name}</h3>
     <p className="text-gray-600 mb-6">{plan.description}</p>
@@ -232,13 +212,62 @@ const PlanCard = ({ plan }) => (
       ))}
     </ul>
     <div className="text-4xl font-extrabold mb-6">
-      {plan.price === 0 ? "Free" : `$${plan.price}/mo`}
+      {plan.price === 0 ? "Free" : `${plan.price}/mo`}
     </div>
-    <button className="bg-blue-600 text-white font-semibold py-3 px-6 rounded-full transition-transform duration-300 hover:bg-blue-700 hover:shadow-lg transform hover:scale-110">
+    <button
+      className="bg-blue-600 text-white font-semibold py-3 px-6 rounded-full transition-transform duration-300 hover:bg-blue-700 hover:shadow-lg transform hover:scale-110"
+      onClick={handleGetStarted ? handleGetStarted : null}
+    >
       {plan.buttonText}
     </button>
   </div>
 );
+
+
+const useHandleGetStarted = () => {
+  const navigate = useNavigate();
+
+  const handleGetStarted = () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login");
+    } else {
+      navigate("/keyword-strategy-builder");
+    }
+  };
+  return handleGetStarted;
+};
+
+const useScrollToSection = () => {
+  const scrollToSection = (id, duration = 1000) => {
+    const target = document.getElementById(id);
+    if (!target) return;
+
+    const start = window.scrollY;
+    const end = target.getBoundingClientRect().top + window.scrollY;
+    const startTime = performance.now();
+
+    const easeInOutQuad = (t) =>
+      t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+
+    const scroll = (currentTime) => {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const ease = easeInOutQuad(progress);
+      const scrollPos = start + (end - start) * ease;
+
+      window.scrollTo(0, scrollPos);
+
+      if (progress < 1) {
+        requestAnimationFrame(scroll);
+      }
+    };
+
+    requestAnimationFrame(scroll);
+  }
+  return scrollToSection;
+};
+
 
 
 /* Data */
@@ -314,7 +343,7 @@ const pricingPlans = [
   {
     name: "Premium",
     description: "Advanced tools.",
-    price: 3,
+    price: 1,
     buttonText: "Upgrade Now",
     features: [
       "Unlimited uploads with faster keyword generation.",

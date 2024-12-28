@@ -2,10 +2,11 @@ import React, { useState } from "react";
 
 const KeywordStrategyBuilder = () => {
   const [videoFile, setVideoFile] = useState(null);
-  const [keywords, setKeywords] = useState(""); // Seed keywords
+  const [keywords, setKeywords] = useState("");
   const [loading, setLoading] = useState(false);
-  const [keywordRanks, setKeywordRanks] = useState([]); // Keyword ranks
-  const [wikidataKeywords, setWikidataKeywords] = useState({}); // Wikidata keywords as an object
+  const [keywordRanks, setKeywordRanks] = useState([]);
+  const [wikidataKeywords, setWikidataKeywords] = useState({});
+  const [associatedScores, setAssociatedScores] = useState({});
   const [error, setError] = useState("");
 
   const handleFileChange = (event) => {
@@ -16,17 +17,17 @@ const KeywordStrategyBuilder = () => {
   };
 
   const calculateAssociatedScores = (keywordRanks, wikidataKeywords) => {
-    const associatedScores = {};
+    const scores = {};
     keywordRanks.forEach(({ keyword, normalized_score }) => {
       if (wikidataKeywords[keyword]) {
         const associations = wikidataKeywords[keyword];
         const share = normalized_score / associations.length;
         associations.forEach((assoc) => {
-          associatedScores[assoc] = share.toFixed(2); // Round to 2 decimals
+          scores[assoc] = (scores[assoc] || 0) + share; // Accumulate scores
         });
       }
     });
-    return associatedScores;
+    return scores;
   };
 
   const handleSubmit = async (event) => {
@@ -46,25 +47,36 @@ const KeywordStrategyBuilder = () => {
     setError("");
     setKeywordRanks([]);
     setWikidataKeywords({});
+    setAssociatedScores({});
 
     const formData = new FormData();
     formData.append("file", videoFile);
     formData.append("seed_keywords", keywords);
 
     try {
-      const response = await fetch("http://localhost:8000/keywords-bart-seed-seo/", {
-        method: "POST",
-        body: formData,
-      });
+      const response = await fetch(
+        "http://localhost:8000/keywords-bart-seed-seo/",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
 
       const result = await response.json();
 
       if (response.ok) {
         setKeywordRanks(result.keyword_ranking || []);
         setWikidataKeywords(result.wikidata_keywords || {});
-        alert("Keywords, ranks, and Wikidata associations generated successfully!");
+        const scores = calculateAssociatedScores(
+          result.keyword_ranking,
+          result.wikidata_keywords
+        );
+        setAssociatedScores(scores);
+        alert("Keywords, ranks, and associated scores generated successfully!");
       } else {
-        setError(result.error || "Failed to generate keywords, ranks, and Wikidata associations.");
+        setError(
+          result.error || "Failed to generate keywords and associations."
+        );
       }
     } catch (error) {
       console.error("Error during the request:", error);
@@ -72,30 +84,28 @@ const KeywordStrategyBuilder = () => {
     }
 
     setLoading(false);
-    setVideoFile(null);
-    setKeywords("");
   };
 
-  const associatedScores = calculateAssociatedScores(keywordRanks, wikidataKeywords);
-
   return (
-    <div className="flex flex-col min-h-screen bg-gray-100">
-      <header className="bg-white shadow">
-        <div className="container mx-auto px-4 py-6">
-          <h1 className="text-3xl font-bold text-gray-800">Keyword Strategy Builder</h1>
-          <p className="mt-2 text-gray-600">
-            Build a strong SEO strategy by analyzing keyword performance with seed keywords.
-          </p>
+    <div className="flex flex-col min-h-screen bg-gray-50">
+      <header className="bg-white shadow-md fixed w-full z-10 top-0">
+        <div className="max-w-7xl mx-auto flex justify-between items-center py-4 px-6">
+          <div className="text-2xl font-bold text-blue-600">SEOgenie</div>
         </div>
       </header>
 
-      <main className="flex-grow container mx-auto px-4 py-10">
+      <main className="flex-grow container mx-auto px-4 py-10 pt-16">
         <section className="text-center">
-          <h2 className="text-2xl font-semibold text-gray-800">Plan Your Keyword Strategy</h2>
-          <form onSubmit={handleSubmit} className="mt-6">
+          <h2 className="text-2xl font-semibold text-gray-800">
+            Keyword Strategy Builder
+          </h2>
+          <form
+            onSubmit={handleSubmit}
+            className="mt-6 bg-white shadow-lg rounded-lg p-8"
+          >
             <div className="mb-4">
               <textarea
-                className="w-full p-4 border border-gray-300 rounded-md mb-4"
+                className="w-full p-4 border rounded-md"
                 placeholder="Enter seed keywords separated by commas..."
                 value={keywords}
                 onChange={(e) => setKeywords(e.target.value)}
@@ -106,66 +116,58 @@ const KeywordStrategyBuilder = () => {
                 type="file"
                 accept="video/*"
                 onChange={handleFileChange}
-                className="border border-gray-300 rounded-md p-2 w-full"
+                className="w-full border p-2 rounded-md"
               />
             </div>
             <button
               type="submit"
-              className="mt-4 px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow hover:bg-blue-500"
+              className="mt-4 px-6 py-3 bg-blue-600 text-white rounded-lg"
               disabled={loading}
             >
               {loading ? "Processing..." : "Submit Strategy"}
             </button>
           </form>
-
-          {loading && (
-            <p className="mt-4 text-yellow-600">Please wait while we process your video and keywords...</p>
-          )}
-
-          {error && <p className="mt-4 text-red-600">Error: {error}</p>}
-
-          {/* Keyword Ranks Display */}
+          {error && <p className="mt-4 text-red-600">{error}</p>}
           {keywordRanks.length > 0 && (
             <div className="mt-6">
-              <h3 className="text-xl font-semibold text-gray-800">Keyword Ranks:</h3>
+              <h3 className="text-xl font-semibold text-gray-800">
+                Keyword Rankings:
+              </h3>
               <ul className="mt-2 list-disc list-inside">
                 {keywordRanks.map((item, index) => (
-                  <li key={index} className="text-gray-700">
+                  <li key={index}>
                     {item.keyword} - {item.normalized_score.toFixed(2)}
                   </li>
                 ))}
               </ul>
             </div>
           )}
-
-          {/* Wikidata Keywords Display with Associated Scores */}
           {Object.keys(wikidataKeywords).length > 0 && (
             <div className="mt-6">
-              <h3 className="text-xl font-semibold text-gray-800">Associated keywords with Scores:</h3>
+              <h3 className="text-xl font-semibold text-gray-800">
+                Associated keywords with Scores:
+              </h3>
               <ul className="mt-2 list-disc list-inside">
-                {Object.entries(wikidataKeywords).map(([keyword, associations], index) => (
-                  <li key={index} className="text-gray-700">
-                    <strong>{keyword}</strong>
-                    <ul>
-                      {associations.map((association, idx) => (
-                        <li key={idx} className="text-gray-600">
-                          - {association}-{associatedScores[association] || "N/A"}
-                        </li>
-                      ))}
-                    </ul>
-                  </li>
-                ))}
+                {Object.entries(wikidataKeywords).map(
+                  ([keyword, associations], index) => (
+                    <li key={index} className="text-gray-700">
+                      <strong>{keyword}</strong>
+                      <ul>
+                        {associations.map((association, idx) => (
+                          <li key={idx} className="text-gray-600">
+                            - {association}-
+                            {associatedScores[association].toFixed(2) || "N/A"}
+                          </li>
+                        ))}
+                      </ul>
+                    </li>
+                  )
+                )}
               </ul>
             </div>
-          )}
+          )}{" "}
         </section>
       </main>
-
-      <footer className="bg-gray-800 py-6">
-        <div className="container mx-auto text-center text-gray-300">
-          <p>&copy; 2024 SEO Video Processing. All Rights Reserved.</p>
-        </div>
-      </footer>
     </div>
   );
 };

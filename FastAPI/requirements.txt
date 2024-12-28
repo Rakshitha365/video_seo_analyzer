@@ -6,3 +6,4 @@ keybert
 moviepy
 uvicorn
 fastapi
+SPARQLWrapper
