@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+// import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const KeywordStrategyBuilder = () => {
   const [videoFile, setVideoFile] = useState(null);
@@ -6,8 +8,13 @@ const KeywordStrategyBuilder = () => {
   const [loading, setLoading] = useState(false);
   const [keywordRanks, setKeywordRanks] = useState([]);
   const [wikidataKeywords, setWikidataKeywords] = useState({});
+  const [generatedKeywords, setGeneratedKeywords] = useState([]); // Store generated keywords
+  
   const [associatedScores, setAssociatedScores] = useState({});
   const [error, setError] = useState("");
+  const [showLogoutPopup, setShowLogoutPopup] = useState(false); // Logout modal state
+  
+  const navigate = useNavigate();
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
@@ -85,20 +92,57 @@ const KeywordStrategyBuilder = () => {
 
     setLoading(false);
   };
+  
+  const handleLogoutClick = () => {
+    setShowLogoutPopup(true); // Show the logout confirmation popup
+  };
+
+    const cancelLogout = () => {
+      setShowLogoutPopup(false); // Close the logout popup
+    };
+    const confirmLogout = () => {
+      // Clear authentication token
+      localStorage.removeItem("token");
+
+      // Clear state and redirect to landing page
+      setVideoFile(null);
+      setKeywords("");
+      setGeneratedKeywords([]);
+      setKeywordRanks([]);
+      setError("");
+      setShowLogoutPopup(false);
+
+      navigate("/"); // Redirect to landing page
+    };
+
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       <header className="bg-white shadow-md fixed w-full z-10 top-0">
-        <div className="max-w-7xl mx-auto flex justify-between items-center py-4 px-6">
-          <div className="text-2xl font-bold text-blue-600">SEOgenie</div>
+        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between py-4 px-6">
+          <button
+            className="text-2xl font-bold text-blue-600 cursor-pointer focus:outline-none"
+            onClick={() => navigate("/")}
+            style={{ border: "none", background: "none" }}
+          >
+            SEOgenie
+          </button>
+          <nav className="flex flex-wrap items-center space-x-4">
+            <button
+              onClick={handleLogoutClick}
+              className="bg-red-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-red-600 transition duration-300"
+            >
+              Logout
+            </button>
+          </nav>
         </div>
       </header>
-
-      <main className="flex-grow container mx-auto px-4 py-10 pt-16">
+      <main className="flex-grow container mx-auto px-4 py-10 mt-16">
         <section className="text-center">
           <h2 className="text-2xl font-semibold text-gray-800">
-            Keyword Strategy Builder
+            Keywords Generator
           </h2>
+
           <form
             onSubmit={handleSubmit}
             className="mt-6 bg-white shadow-lg rounded-lg p-8"
@@ -127,7 +171,9 @@ const KeywordStrategyBuilder = () => {
               {loading ? "Processing..." : "Submit Strategy"}
             </button>
           </form>
+
           {error && <p className="mt-4 text-red-600">{error}</p>}
+
           {keywordRanks.length > 0 && (
             <div className="mt-6">
               <h3 className="text-xl font-semibold text-gray-800">
@@ -165,9 +211,31 @@ const KeywordStrategyBuilder = () => {
                 )}
               </ul>
             </div>
-          )}{" "}
+          )}
         </section>
       </main>
+      {showLogoutPopup && (
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg text-center">
+            <h3 className="text-xl font-semibold mb-4">Confirm Logout</h3>
+            <p className="mb-6">Are you sure you want to log out?</p>
+            <div className="flex justify-center space-x-4">
+              <button
+                onClick={confirmLogout}
+                className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition duration-300"
+              >
+                Yes, Logout
+              </button>
+              <button
+                onClick={cancelLogout}
+                className="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400 transition duration-300"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

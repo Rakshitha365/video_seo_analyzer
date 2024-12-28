@@ -212,7 +212,7 @@ const PlanCard = ({ plan, handleGetStarted }) => (
       ))}
     </ul>
     <div className="text-4xl font-extrabold mb-6">
-      {plan.price === 0 ? "Free" : `${plan.price}/mo`}
+      {plan.price === 0 ? "Free" : `${plan.price}$/month`}
     </div>
     <button
       className="bg-blue-600 text-white font-semibold py-3 px-6 rounded-full transition-transform duration-300 hover:bg-blue-700 hover:shadow-lg transform hover:scale-110"
